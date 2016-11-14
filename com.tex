@@ -1,0 +1,30 @@
+\begin{section}{Preliminary on Commitments scheme and Zero Knowledge proof}
+	\begin{definition}{\textsf{Commitment}}
+	A commitment scheme $\mathsf{COM} = (\KeyGen, \Com, \Verif)$ is a triple of PPT algorithms such that:
+	\begin{description}
+		\item[$\KeyGen	(1^\lambda) \to \ck$]: The key generation algorithm takes the security parameter $1^\lambda$ in the unary presentation and it outputs the commitment key $\ck$.
+		\item[$\Com(\ck, m; \vec{r}) \to \com$]: The commit algorithm takes $\ck$ and the message to be committed $m$, the algorithm draws a random vectors $\vec{r} \sample R$. The algorithm outputs the commitment $\com$ and the openning information $\open$.
+		\item[$\Verif(\ck, m, \com, \open) \to \{\True, \False\}$]: This verification takes $\ck$, $m$, $\com$ and $\open$, verifies whether the commitment and the openning information correspond to the message $m$ and the commitment key $\ck$. Then it outputs $\True$ or $\False$.
+	\end{description}	
+	\end{definition}
+\end{section}
+
+
+
+\begin{section}{Commitment based on  Ring-SIS~\cite{DBLP:journals/iacr/BaumDOP16}}
+	In this section, we will introduce the commitment schem based on Ring-SIS introduced by Baum~\etal~\cite{DBLP:journals/iacr/BaumDOP16}.
+	
+	Before the explicite construction, we need to introduce somme notation.
+	
+	\begin{definition}{$(D, \gamma_D, d_R)$-commitment friendly ring}
+		
+		The ring $R_q = R/qR$ is $(D, \gamma_D, d_R)$-commitment friendly if there is a subset $D \subseteq R$ such that for any $c$ 
+		
+	\end{definition}
+	
+	\begin{description}
+		\item[$\KeyGen(1^\lambda)$] :
+			
+	\end{description}	
+	
+\end{section}

@@ -3,28 +3,55 @@
 	A commitment scheme $\mathsf{COM} = (\KeyGen, \Com, \Verif)$ is a triple of PPT algorithms such that:
 	\begin{description}
 		\item[$\KeyGen	(1^\lambda) \to \ck$]: The key generation algorithm takes the security parameter $1^\lambda$ in the unary presentation and it outputs the commitment key $\ck$.
-		\item[$\Com(\ck, m; \vec{r}) \to \com$]: The commit algorithm takes $\ck$ and the message to be committed $m$, the algorithm draws a random vectors $\vec{r} \sample R$. The algorithm outputs the commitment $\com$ and the openning information $\open$.
-		\item[$\Verif(\ck, m, \com, \open) \to \{\True, \False\}$]: This verification takes $\ck$, $m$, $\com$ and $\open$, verifies whether the commitment and the openning information correspond to the message $m$ and the commitment key $\ck$. Then it outputs $\True$ or $\False$.
+		\item[$\Com(\ck, m; \vec{r}) \to (\com, \open)$]: The commit algorithm takes $\ck$ and the message to be committed $m$, the algorithm draws a random vectors $\vec{r} \sample R$. The algorithm outputs the commitment $\com$ and the opening information $\open$.
+		\item[$\Verif(\ck, m, \com, \open) \to \{\True, \False\}$]: This verification takes $\ck$, $m$, $\com$ and $\open$, verifies whether the commitment and the opening information correspond to the message $m$ and the commitment key $\ck$. Then it outputs $\True$ or $\False$.
 	\end{description}	
 	\end{definition}
+
+        \begin{definition}{\textsf{(Binding)}}
+          
+        \end{definition}
+
+
 \end{section}
 
 
 
 \begin{section}{Commitment based on  Ring-SIS~\cite{DBLP:journals/iacr/BaumDOP16}}
-	In this section, we will introduce the commitment schem based on Ring-SIS introduced by Baum~\etal~\cite{DBLP:journals/iacr/BaumDOP16}.
+	In this section, we will introduce the commitment scheme based on Ring-SIS introduced by Baum~\etal~\cite{DBLP:journals/iacr/BaumDOP16}.
 	
-	Before the explicite construction, we need to introduce somme notation.
+	Before the explicit construction, we need to introduce some notation.
 	
-	\begin{definition}{$(D, \gamma_D, d_R)$-commitment friendly ring}
+	\begin{definition}{$(D, \gamma_D, d_R)$-commitment friendly ring~\cite{DBLP:journals/iacr/BaumDOP16}}
 		
-		The ring $R_q = R/qR$ is $(D, \gamma_D, d_R)$-commitment friendly if there is a subset $D \subseteq R$ such that for any $c$ 
+		The ring $R_q = R/qR$ is $(D, \gamma_D, d_R)$-commitment friendly if there is a subset $D \subseteq R$ such that for any $c \in D$ and $r \in R$ with $deg(r) < 2d_R$, we have $||c \cdot r ||_{\infty} \leq \gamma_D||r||_{\infty}$. Furthermore, for any $d, d' \in D$ it holds that $d- d'$ is invertible modulo $q$, and $deg(d)< d_R$
 		
 	\end{definition}
 	
-	\begin{description}
-		\item[$\KeyGen(1^\lambda)$] :
-			
-	\end{description}	
+        We present the a commitment scheme which is computationally binding and statistically hinding commitment
+        
+        \begin{construction}{Ring-SIS based commitment}
+          
+          \begin{description}
+          \item[$\KeyGen(1^\lambda) \to \ck$]: Output $(D, \gamma_D, d_R)$-commitment friendly ring $R_q$, a uniformly random matrix $A \in R_q^{(k+1) \times m}$, constants $\gamma > 1$ and $\beta$ such that $\gamma Nm\beta \gamma_D^2 < q$, and a distribution $\mathcal{D}$ that will output vectors in $R^m$. It is required that any vector that can be produced with non-zero probability has norm at most $\beta$ and degree less that $d_R$.
+            
+          \item[$\Com(\ck, m; \vec{r})) \to (\com, \open)$]: To commit a message $m\in R_q^k$, we draw a random vector $\vec{r} \sample R^m$ accroding to the distribution $\mathcal{D}$ ($||r||_{\infty} \leq \beta$ and $deg(\vec{r} < d_R)$), the commitment will be computed as:
+            \begin{align*}
+              \Com(\vec{m}; \vec{r}) &:= A\vec{r} + \left( \begin{matrix} 0 \\ \vec{m} \end{matrix} \right)\\
+              \open &:= (\vec{r}, f\in D)
+            \end{align*}
+            
+          \item[$\Verif(\ck, m, \com, \open) \to \{\True, \False\}$]: The verification algrotihm checks:
+            \begin{align*}
+              A\vec{r} + \left( \begin{matrix} 0 \\ f\vec{x} \end{matrix}\right) &= f\vec{c}
+            \end{align*}
+            
+            and that $||\vec{r}||_\infty \leq \gamma N m \beta \gamma_D$ and $deg(\vec{r}) < 2 d_R$.
+            
+          \end{description}
+        \end{construction}
+        \begin{proof}
+          
+        \end{proof}
 	
 \end{section}

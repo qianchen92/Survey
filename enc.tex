@@ -1,0 +1,27 @@
+As one of the most important cryptographic primitive, the encryption scheme is studied for decades. In this section, we will present some lattice based encryption scheme.
+
+\begin{section}{Regev and Dual-Regev LWE-based encryption scheme}
+  
+The Regev's LWE encryption~\cite{DBLP:conf/stoc/Regev05} scheme is the first LWE based encryption scheme.
+
+\begin{construction}{Regev's encryption scheme}
+  The Regev's encryption scheme is a triple of PPT algorithm $(\KeyGen, \Enc, \Dec)$.
+  \begin{description}
+  \item[$\KeyGen(1^\lambda) \to (\SK, \PK)$]: 
+    \begin{enumerate}
+    \item We draw a uniformly random vector $\vec{s} \in \mathbb{Z}_q^n$ and set it the secret key for the encryption scheme.
+    \item Draw a random vector $\vec{e} \in \mathbb{Z}_q^m$ \wrt the distribution $\chi$ and a uniformaly random matrix $\tilde{A} \in \mathbb{Z}_q^{n \times m}$ for $m \approx (n+1) log(q)$. Then the algorithm computes $\vec{b} = \vec{s}^T \cdot \tilde{A} + \vec{e}^T~mod~q$.
+    \item Compute the matrix $A$ as follows:
+      \begin{align*}
+        A &= \left[ \begin{matrix} ~\tilde{A}~ \\ ~\vec{b}^T~ \end{matrix} \right] \in \mathbb{Z}_q^{(n+1) \times m}.
+      \end{align*}
+    \item Note that we have the following information:
+      \begin{align*}
+        (-\vec{s}^T, 1) \cdot A = \vec{e}^T &\approx \vec{0} (mod~ q).
+      \end{align*}
+    \end{enumerate}
+  \end{description}
+\end{construction}
+  
+
+\end{section}

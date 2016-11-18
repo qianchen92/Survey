@@ -1,0 +1,27 @@
+\begin{section}{Ring-SIS based Zero-Knowledge proof system}
+  In this section, we present the Ring-SIS based Zero-Knowledg proof system, which is described initially in the paper~\cite{DBLP:journals/iacr/BaumDOP16}.
+  It's based on this $\Sigma$ protocol, we construct the our Designed Verifier Zero-Knowledge proof system.
+
+  \begin{construction}{$\Sigma$-protocol for Opening a Commitment $\Pi_{\open}$}
+    
+    In this proof scheme, we proof the plaintext knowledge $x$ corresponded to the committed value $\vec{c} = C(x; \vec{r})$.
+
+    \begin{enumerate}
+    \item The prover computes a commitment $\vec{t} = C(\mu; \vec{\rho})$, here $\mu$ and $\vec{\rho}$ are chosen uniformly form $R_q$ and $R^m$. 
+      And rejection sampling on the fact that $||\vec{\rho}||_{infty} \leq (1+ \frac{\gamma N m}{2}) \beta \gamma_D$ and $deg(\vec{\rho}) < 2 d_R$.
+    \item The verifier sends a random challenge $d \in D$.
+    \item The prover's goal in this stage is try to open the commitment $\vec{t} + t\vec{c}$ \wrt the opening information $\vec{r}_z = \vec{\rho} + d\vec{r}$.
+      The protocol abort if we have $||\vec{r}_z||_{\infty} > \frac{\gamma N m}{2} \cdot \beta \gamma_D$. 
+      If the algorithm has not aborted, the prover sends $z, \vec{r}_z$ and the opening information $\open_{aux}$ \wrt the commitment $\vec{c}_{aux}$ to the verifier.
+    \item The verifier checks the opening information $\open_{aux}$ is valid, $C(z; \vec{z}_r) = \vec{t} + d \vec{c}$
+      and also the random vector $\vec{r}_z$ verifies that $||\vec{r}_z||_{infty} \leq ||\frac{\gamma N m}{2} \cdot \beta \gamma_D||$ and $deg(\vec{r}_z) < 2d_R$.
+    \end{enumerate}
+  \end{construction}
+
+\end{section}
+
+\begin{section}{Transformation form the $\Sigma$-protocol to Designed Verifier Zero-Knowledge proof system}
+  
+  The transformation is applied for a special family of $\Sigma$-protocol.
+  
+\end{section}

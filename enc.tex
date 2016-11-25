@@ -20,6 +20,14 @@ The Regev's LWE encryption~\cite{DBLP:conf/stoc/Regev05} scheme is the first LWE
         (-\vec{s}^T, 1) \cdot A = \vec{e}^T &\approx \vec{0} (mod~ q).
       \end{align*}
     \end{enumerate}
+    We can actually consider the key generation algorithm as a random hash function with a trapdoor, using this trapdoor we can easily sample a vector in the $\Lambda^{\bot}(A)$ lattice.
+
+    \item[$\Enc(\mu, \PK)$]: with $\mu \in \{0, 1\}$
+      \begin{enumerate}
+      \item Parse $\PK$ as $A \in \mathbb{Z}_p^{(n+1) \times m}$.
+      \item Chose randomly a vector $\vec{x} \in \{0,1\}^m$.
+      \item The encryption of the
+      \end{enumerate}
   \end{description}
 \end{construction}
   

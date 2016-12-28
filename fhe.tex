@@ -1,14 +1,186 @@
-\begin{section}{Fully homomorphic encryption scheme~\cite{DBLP:conf/crypto/GentrySW13}}
-  
-  In this section, we will instantiate the GSW fully homomorphic encryption scheme.
 
-  As in the original paper, we will firstly give a basic encryption scheme.
+In this section, we will instantiate the fully homomorphic encryption scheme of third generation\cite{DBLP:conf/crypto/GentrySW13}.
+
+As in the original paper, we will firstly give a basic encryption scheme.
+
+The entire FHE homomorphic encryption scheme is a $6$-tuple of PPT algorithm 
+$$FHE = (\Setup, \SKGen, \PKGen, \Enc, \Dec, \MPDec).$$ 
+For the clarity, we separate the parameters generation algorithm into three parts.
+
+
+\begin{section}{Notations and simple properties}
+  \begin{definition}{Bit Decomposition, Powers of $2$ and Flatten algorithms}
+    For $q$ a prime of $\ell+1$ bits, we specify the following three algorithms: $(\BitDecomp, \Powers, \Flatten)$ as follows.
+    \begin{description}
+    \item[${\mathsf{\BitDecomp}}: \mathbb{Z}_q^{n} \to \{0,1\}^{(\ell+1) \times n}$]
+      \begin{align*}
+        \BitDecomp(\vec{v} = [v_0, v_1, \dots, v_{n-1}]) &= [v_{0,0}, \dots v_{0,\ell}, v_{1,0}, \dots v_{n-1,0}, \dots, v_{n-1, \ell}]
+      \end{align*}
+      where $v_{i,j}$ represents the $j$-th bit of the $i$-th coefficient of the vector $\vec{v}$.
+
+    \item[${\mathsf{\Powers}}: \mathbb{Z}_q^{n} \to \mathbb{Z}_q^{(\ell+1) \times n}$]
+      \begin{align*}
+        \Powers(\vec{v} = [v_0, v_1, \dots, v_{n-1}]) &= [v_0, 2 \cdot v_0, \dots 2^{\ell} \cdot v_0, \dots, v_{n-1}, \dots, 2^{n-1} \cdot v_{n-1}]
+      \end{align*}
+
+    \item[${\mathsf{\BitDecomp^{-1}}}: \mathbb{Z}_q^{1 \times ((n + 1) \times \ell)} \to \mathbb{Z}_q^{\ell+1}$]
+      \begin{align*}
+        \BitDecomp(\hat{\vec{v}} = [v_{0,0}, \dots v_{0,\ell}, v_{1,0}, \dots v_{n-1,0}, \dots, v_{n-1, \ell}]) &= [v_0, v_1, \dots, v_{n-1}]\\
+                                                                                                               &=[\sum_{i = 0}^{\ell} v_{0,i}, \dots, \sum_{i=0}^{\ell} v_{n-1, i}]
+      \end{align*}
+
+      We notice that the input of the function ${\mathsf{\BitDecomp}^{-1}}$ can be not only the bits but the elements in the ring $\mathbb{Z}_q$. With this remark, we construct the following function $\Flatten$ which transforms a vector of "bits" in $\mathbb{Z}_q$ into a vector of real bits.
+
+    \item[$\Flatten: \mathbb{Z}_q^{1 \times ((n + 1) \times \ell)} \to \{0,1\}^{(\ell+1) \times n}$]
+      \begin{align*}
+        \Flatten(\hat{\vec{v}}) &= \BitDecomp( \BitDecomp^{-1}(\hat{\vec{v}}))
+      \end{align*}      
+      
+    \end{description}
+    
+
+    Remark that each function has his matrix version which simply applies the function to each row of the matrix.
+  \end{definition}
+
+
+  Here we will prove some useful properties of the functions 
+
+  \begin{lemma}{Linearity of Flatten}
+    
+    For $\hat{\vec{a}}, \hat{\vec{b}} \in \mathbb{Z}_q^{1 \times ((\ell+1) \times n)}$ and $\lambda \in \mathbb{Z}_q$ we have the following equality:
+    \begin{align*}
+      \Flatten(\Flatten(\hat{\vec{a}}) + \Flatten(\hat{\vec{b}})) &= \Flatten(\hat{\vec{a}}+ \hat{\vec{b}})
+    \end{align*}
+    
+  \end{lemma}
+
+  \begin{proof}
+    
+    Note the different variables as follows:
+
+    \begin{align*}
+      \hat{\vec{a}} &= [\hat{a}_{0,0}, \dots, \hat{a}_{0, \ell}, \dots, \hat{a}_{n-1, 0}, \dots, \hat{a}_{n-1, \ell}] & \hat{\vec{b}} &= [\hat{b}_{0,0}, \dots, \hat{b}_{0, \ell}, \dots, \hat{b}_{n-1, 0}, \dots, \hat{b}_{n-1, \ell}]\\
+      a_{j} &= \sum_{i = 0}^{\ell}\hat{a}_{j, i}~(mod~q) & b_{j} &= \sum_{i = 0}^{\ell} \hat{b}_{j, i}~(mod~q)\\
+      \vec{a} &= \Flatten(\hat{\vec{a}})\\
+                    &= [a_{0,0}, \dots, a_{0, \ell}, \dots, a_{n-1, 0}, \dots, a_{n-1, \ell}]\\
+      \vec{b} &= \Flatten(\hat{\vec{b}})\\
+                    &= [b_{0,0}, \dots, b_{0, \ell}, \dots, b_{n-1, 0}, \dots, b_{n-1, \ell}]
+    \end{align*}
+
+    We remark that
+    \begin{align*}
+      a_{j} &= \sum_{i = 0}^{\ell}\hat{a}_{j, i}~(mod~q) & b_{j} &= \sum_{i = 0}^{\ell} \hat{b}_{j, i}~(mod~q)\\
+      &= \sum_{i = 0}^{\ell}a_{j, i}~(mod~q) & &= \sum_{i = 0}^{\ell} b_{j, i}~(mod~q)\\
+    \end{align*}
+
+    which means exactly
+    \begin{align*}
+      \BitDecomp^{-1}(\Flatten(\hat{\vec{a}}) + \Flatten(\hat{\vec{b}})) &= \BitDecomp^{-1}(\hat{\vec{a}}+ \hat{\vec{b}})
+    \end{align*}
+
+    Thus we have
+    \begin{align*}
+      \Flatten(\Flatten(\hat{\vec{a}}) + \Flatten(\hat{\vec{b}})) &= \Flatten(\hat{\vec{a}}+ \hat{\vec{b}})
+    \end{align*}
+    
+  \end{proof}
+
+  \begin{lemma}\label{rm-flatten}
+    For prime number $q$ and $m \in \mathbb{Z}_q$, we have the following equality:
+    \begin{align*}
+      \Flatten(m \cdot I_N) \cdot \left( \begin{smallmatrix} 1\\ 2\\ \vdots\\ 2^{l-1}  \end{smallmatrix}\right) &= m \cdot \left( \begin{smallmatrix} 1\\ 2\\ \vdots\\ 2^{l-1}  \end{smallmatrix}\right) ~mod~q
+    \end{align*}
+  \end{lemma}
   
-  \begin{desciption}
-  \item[$\Setup(1^\lambda)$]: 
+
+
+  
+  
+\end{section}
+
+
+\begin{section}{Construction of GSW fully homomorphic encryption scheme}
+  
+  \begin{description}
+  \item[$\Setup(1^\lambda, 1^L)$]:
+    
+    We generate the parameters 
+    
     \begin{enumerate}
-    \item We
+    \item Choose a modulus $q$ of $\kappa = \kappa(\lambda, L)$ bits, the lattice dimension parameter $n = n (\lambda, L)$ and the error distribution $\chi = \chi(\lambda, L)$ to ensure at least $\lambda$ bit security against the LWE problem.
+    \item Then we compute $m = m (\lambda, L) = O (n~log~q)$, $\ell = \floor{q} + 1$ and $N = (\ell + 1) \times n$
+    \item Output $PP = (n, q, \chi, m)$.
     \end{enumerate}
+
+  \item[$\SKGen(\PP)$]:
+    \begin{enumerate}
+    \item Sample $\vec{t} \sample \mathbb{Z}_q^m$.
+    \item Let $\vec{s} = (1, -t_1, \dots, -t_n) \in \mathbb{Z}_q^{n+1}$.
+    \item Output the secret key $\SK = \vec{s}$.
+    \end{enumerate}
+    
+  \item[$\PKGen(\PP, \SK)$]:
+    \begin{enumerate}
+    \item Parse $\SK$ as $\vec{s} = (1 | \vec{t})$.
+    \item Sample a uniformly random matrix $B  \gets \mathbb{Z}_q^{m\times n}$ and a noise vector $\vec{e} \gets \chi^{m}$.
+    \item Compute $\vec{b} = B \cdot \vec{t} + \vec{e}$. 
+    \item Set the matrix $A = [\vec{b} | B ] \in \mathbb{Z}_q^{m \times (n+1)}$, remark that $A \cdot \vec{s} = \vec{e}$.
+    \item Output the public key $\PK = A$.
+    \end{enumerate}
+
+  \item[$\Enc(\PP, \PK, \mu)$]:
+    
+    To encrypt a message $\mu \in \mathbb{Z}_q$.
+    \begin{enumerate}
+    \item Sample a uniform binary matrix $R \in \{0,1\}^{(\ell-1) \times m}$.
+    \item Compute the corresponded ciphertext as bellow:
+      \begin{align*}
+        C &= \Flatten(\mu \cdot [Id_{l-1}| 0] + \BitDecomp(R \cdot A)) \in \mathbb{Z}_q^{(\ell-1) \times N}
+      \end{align*}
+    \item Output the ciphertext $C$.
+    \end{enumerate}
+
+  \item[$\Dec(\PP, \SK, C)$]:
+    
+    The decryption algorithm has two version $\Dec$ and $\MPDec$, the first is the basic encryption of one bit $\mu \in \{0,1\}$ and $\MPDec$ is an algorithm from~\cite{DBLP:conf/eurocrypt/MicciancioP12} which can decrypt the message in $\mathbb{Z}_p$.
+    \begin{enumerate}
+    \item We observe that the first $\ell$ coefficients of the vector $\vec{v}$ are $1, 2, \dots , 2^{\ell-1}$.
+    \item Let $i \in \{0,1, \dots \ell-1\}$ such that $v_i \in (q/4, q/2]$. Let $C_i$ be the $i$-th row of $C$.
+    \item Compute $x_i \gets <C_i, \vec{v}>$.
+    \item Output $\mu' = \round{x_i/v_i}$.
+    \end{enumerate}
+    
+
+  \item[$\MPDec(\PP, \SK, C)$]:
+    
+    This is the second version of the decryption scheme. Here we suppose that $q = 2^{l-1}$, thus the first $\ell - 1$ coefficients  of $\vec{v}$ are $1, 2, \dots, 2^{l-2}$. Notice that we have $C \cdot \vec{v} = \mu \cdot \vec{1, 2, \dots, 2^{\ell-2}} + \BitDecomp(R \cdot \vec{e})$ and the second part of the addition is very small (at most $N \times ||\vec{e}||_1$).
+    \begin{enumerate}
+    \item Compute $C \cdot \vec{v} = \mu \cdot \vec{(1, 2, \dots, 2^{\ell-2})} + \BitDecomp(R \cdot \vec{e})$.
+    \item Recover $LSB(\mu)$ from $\mu \cdot 2^{\ell-2} + small$.
+    \item Continue to compute the next-least-significant-bit with $(\mu - LSB(\mu)) \cdot 2^{\ell-3} + small$~\etc.
+    \end{enumerate}
+  \end{description}
+
+  Remark that for general $q$ case, we can use the Nearest Plane algorithm~\cite{DBLP:journals/combinatorica/Babai86} which allow us to remove the noise part in $C \cdot \vec{v}$ and to get the message.
+
+  
+  We also present here the homomorphic operation on the ciphertexts
+  \begin{description}
+  \item[${\mathsf{MultConst}}(C, \alpha)$]: For a ciphertext $C \in \mathbb{Z}_q^{(\ell-1)\times N}$ of the plaintext $m \in \mathbb{Z}_q$ and $\alpha \in \mathbb{Z}_q$, this algorithm generate the new ciphertext $C_\alpha$ corresponded to the message $\alpha \times m$.
+    \begin{enumerate}
+    \item Compute $M_\alpha \gets \Flatten(\alpha \cdot Id_{(\ell-1) \times N})$
+    \item Generate the new ciphertext $C_\alpha \gets \Flatten(M_\alpha \cdot C)$. Note that we have:\
+      \begin{align*}
+        {\mathsf{MultConst}(C, \alpha)} \cdot \vec{v} &= M_\alpha \cdot C \cdot \vec{v}\\
+                                                      &= M_\alpha \cdot (\mu \cdot \vec{v} + \vec{e})\\
+                                                      &= \mu \cdot (M_\alpha \cdot \vec{v}) + M_\alpha \cdot \vec{e}\\
+                                                      &= \alpha \cdot \mu \cdot \vec{v} + M_\alpha \cdot \vec{e}
+      \end{align*}
+    \item Notice that $M_\alpha = \Flatten(\alpha \cdot Id_{(\ell-1) \times N}) = \BitDecomp(\BitDecomp^{-1}(\alpha \cdot Id_{(\ell-1) \times N}))$, thus we have $M_\alpha \in \{0,1\}^{N \times N}$. As consequences, the error term of the encryption just grow at most $N$.
+    \end{enumerate}
+
+  \item[${\mathsf{Add}}(C_1, C_2)$]:
+    The addition operation is directly $\Flatten(C_1 + C_2)$. The correctness of the new ciphertext and the bound of the error term in the new ciphertext is straightforward.
   \end{description}
 
 \end{section}

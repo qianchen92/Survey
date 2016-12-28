@@ -55,3 +55,33 @@
         \end{proof}
 	
 \end{section}
+
+
+\begin{section}{Commitment based on the LWE assumption~\cite{DBLP:conf/esorics/BenhamoudaKLP15}}
+
+\begin{description}
+\item[$\boldmath{\KeyGen}(1^n)$]:
+  \begin{enumerate}
+  \item Sample $(\vec{a}, \vec{b}) \sample ((\mathbb{Z}_q/\langle x^n + 1\rangle)^k)^2$, where $q \equiv 3~mod~8$ is prime, and $n$ is a power of $2$.
+  \item Output $ \pk = (\vec{a}, \vec{b})$.
+  \end{enumerate}
+
+\item[$\boldmath{\Com}(m, \pk)$]: where $m \in \mathbb{Z}_q[x]/\langle x^n + 1 \rangle$.
+  \begin{enumerate}
+  \item Draw $r \sample \mathbb{Z}_q[x]/\langle x^n +1 \rangle$ 
+  \item Draw $\vec{e} \sample D_{\sigma_e}^k$ conditioned by $||\vec{e}||_{\infty} \leq n$
+  \item Output $\vec{c} = \vec{a}m + \vec{b}r + e$ as commitment.
+  \item The opening information is $\open = (r, \vec{e},1)$.
+  \end{enumerate}
+
+\item[$\boldmath{\Verif}(\pk, m, \com = \vec{c}, \open = (r, \vec{e}, f))$]:
+  \begin{enumerate}
+  \item Verify that $\vec{a} m + \vec{b} r + f^{-1}\vec{e} = \vec{c}$
+  \item $||\vec{e}||_{\infty} < \round{\frac{n^{4/3}}{2}}$
+  \item $||f||_{\infty} \leq 1$
+  \item $deg f < \frac{n}{2}$
+  \item Output $\True$ if all these equations are true. Otherwise, output false.
+  \end{enumerate}
+\end{description}
+
+\end{section}

@@ -1,6 +1,6 @@
 \usepackage{amssymb}
 
-%\usepackage{fullpage}
+\usepackage{fullpage}
 
 
 %\usepackage[top=1.5cm, bottom=1.5cm, left=1.5cm, right=1.5cm]{geometry}
@@ -27,7 +27,7 @@
 \usepackage[font=small,labelfont=bf]{caption}
 \newtheorem {definition} {Definition}
 \newtheorem {construction} {Construction}
-%\newtheorem {theorem}{Theorem}
+\newtheorem {lemma}{Lemma}
 
 \lstset
 {
@@ -72,7 +72,8 @@
 \newcommand{\False}{\mathsf{False}}
 \newcommand{\BF}{\mathbf}
 \newcommand{\sample}{\stackrel{{\scriptscriptstyle \mkern4mu R}}{\gets}}
-\newcommand{\etal}{\textit{el. al.}}
+\newcommand{\etal}{\textrm{el. al.}}
+\newcommand{\etc}{\textrm{etc.}}
 \newcommand{\eg}{\textrm{e.g.} }
 \newcommand{\ie}{\textrm{i.e.} }
 \newcommand{\wrt}{\textrm{w.r.t.} }
@@ -80,17 +81,32 @@
 \newcommand{\resp}{\textrm{resp.} }
 \providecommand{\tprod}{{\textstyle\prod}}
 \newcommand{\Setup}{{\mathsf{Setup}}}
+\newcommand{\SKGen}{{\mathsf{SecretKeyGen}}}
+\newcommand{\PKGen}{{\mathsf{PublicKeyGen}}}
 \newcommand{\KeyGen}{{\mathsf{KeyGen}}}
 \newcommand{\OKeyGen}{{\mathsf{OKeyGen}}}
 \newcommand{\Enc}{{\mathsf{Encrypt}}}
 \newcommand{\Dec}{{\mathsf{Decrypt}}}
+\newcommand{\MPDec}{{\mathsf{MPDecrypt}}}
 \newcommand{\Rerand}{{\mathsf{ReRand}}}
 \newcommand{\Sig}{{\mathsf{Sign}}}
 \newcommand{\Verif}{{\mathsf{Verify}}}
 \newcommand{\Prove}{{\mathsf{Prove}}}
 \newcommand{\Com}{{\mathsf{Commit}}}
-\newcommand{\PPP}{\mathsf{PP}}
-\newcommand{\Forge}{\mathsf{Forge}}
+\newcommand{\PPP}{{\mathsf{PP}}}
+\newcommand{\Forge}{{\mathsf{Forge}}}
+
+%GSW encryption components
+\newcommand{\BitDecomp}{{\mathsf{BitDecomp}}}
+\newcommand{\Flatten}{{\mathsf{Flatten}}}
+\newcommand{\Powers}{{\mathsf{PowersOf2}}}
+
+
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\round}{\lfloor}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
 %\newcommand{\Adv}{\mathcal{A}}
 
 
@@ -112,3 +128,17 @@
 
 
 \usepackage{comment}
+
+
+
+%%%% TODO package
+\usepackage{lipsum}                     % Dummytext
+\usepackage{xargs}                      % Use more than one optional parameter in a new commands
+\usepackage{xcolor}  % Coloured text etc.
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
+\newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}

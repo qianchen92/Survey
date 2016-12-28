@@ -1,0 +1,47 @@
+In this chapter, we give the definitions of various lattice assumptions.
+
+\begin{section}{Notations and prelimaries}
+  \begin{definition}{(Gaussian Distribution)}
+    We define the continous Normal Distribution on $\mathbb{R}^m$ centered at $\vec{v}$ with standard deviation $\sigma$ by the density function $\rho_{\vec{v}, \sigma}^m(\vec{x}) =  (\sqrt{2\pi} \sigma)^{-m}exp(-\frac{||\vec{x} - \vec{v}||^2}{2 \sigma^2})$. For the simplicity of the notations, we avoid the subscript $\vec{v}$ if $\vec{v} = 0^m$.
+
+    The discrete Normal Distribution on $\mathbb{Z}^m$ centered at $\vec{v}$ with standard deviation $\sigma$ is defined by the density function $D_{\vec{v}, \sigma}^{m}(\vec{x}) =  \rho_{\vec{v}, \sigma}^m(\vec{x})/ \rho_{\sigma}(\mathbb{Z}^m)$, where $\rho_{sigma}(\mathbb{Z}^m) = \Sigma_{z \in \mathbb{Z}^m} = \rho_{\sigma}^{m}(\vec{z})$ is the scaling factor required to obtain a probability distribution.
+  \end{definition}
+
+  The rejection sampling informally states that if $\sigma \in \tilde{\Theta}(||\vec{v}||)$, then the rejection sampling procedure will result in a distriution statistically close to $D_{\sigma}^\ell$ which is independent from the vector $\vec{v}$. The pro0cedure only requires a constant number of iterations. For the concrete parameters we refer to the original work of Lyubashevsky~\cite{DBLP:conf/eurocrypt/Lyubashevsky12}.
+
+  \begin{definition}{(Rejection Sampling)}
+    
+    Let $V$ be a subset of $\mathbb{Z}^{\ell}$ in which all elements have norms less that $T$ and let $h$ be a probability distribution over $V$. Then for any constant $M$, there exists a $\sigma = \tilde{\Theta}(T)$ such that the output distribution of the following algorithms $A, F$ are statistically close:
+    
+    A:
+    \begin{enumerate}
+    \item $\vec{v} \sample h$.
+    \item $\vec{z} \sample D_{\vec{v}, \sigma}^\ell$.
+    \item Output $(\vec{z}, \vec{v})$ with probability $min(exp(\frac{-2\langle\vec{z}, \vec{v}\rangle + ||\vec{v}||^2}{2 \sigma^2}),1)$.
+    \end{enumerate}
+
+    F:
+    \begin{enumerate}
+    \item $\vec{v} \sample h$.
+    \item $\vec{z} \sample D_{\sigma}^\ell$.
+      \item Output $(\vec{z}, \vec{v})$ with probability $\frac{1}{M}$.
+    \end{enumerate}
+    
+    Remark that $M$ is independent from the vector $\vec{v}$.
+
+  \end{definition}
+  
+\end{section}
+
+\begin{section}{Hardness assumptions}
+
+  \begin{definition}{(Ring-LWE)}
+    Let $R = \mathbb{Z}[x] /\langle x^n +1\rangle$, $R_q = R/ qR$ and $\chi$ be a distribution over $R$.
+    The decisional ring learning with errors assumption (denoted by $RLWE_{q, \chi}$) states that:
+    \begin{align*}
+      \{ (a_i, a_i \cdot s + e_i)\} &\approx_c \{(a_i, u_i)\},
+    \end{align*}
+    for any polynomial number of samples, where $a_i \sample R_q$, $e_i \sample \chi$, $u_i \sample R_q$ and $s \sample R_q$.
+  \end{definition}
+
+\end{section}

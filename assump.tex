@@ -36,12 +36,23 @@ In this chapter, we give the definitions of various lattice assumptions.
 \begin{section}{Hardness assumptions}
 
   \begin{definition}{(Ring-LWE)}
-    Let $R = \mathbb{Z}[x] /\langle x^n +1\rangle$, $R_q = R/ qR$ and $\chi$ be a distribution over $R$.
-    The decisional ring learning with errors assumption (denoted by $RLWE_{q, \chi}$) states that:
+    The $\vec{f}$-LWE problem can be defined as follows.
+    Let $R = \mathbb{Z}[x] /\langle \vec{f}\rangle$, $R_q = R/ qR$ and $\chi$ be a distribution over $R$.
+    The decisional ring learning with errors assumption (denoted by $\vec{f}-RLWE_{q, \chi}$) states that:
     \begin{align*}
       \{ (a_i, a_i \cdot s + e_i)\} &\approx_c \{(a_i, u_i)\},
     \end{align*}
     for any polynomial number of samples, where $a_i \sample R_q$, $e_i \sample \chi$, $u_i \sample R_q$ and $s \sample R_q$.
+  \end{definition}
+
+  \begin{definition}{(Ring-SIS)}
+    The $\vec{f}$-SIS problem can be defined as follows.
+    Let $R = \mathbb{Z}[x] /\langle \vec{f}\rangle$ and $R_q = R/ qR$.
+    The ring small integer solution problem (denoted by $\vec{f}-RSIS_{k, q, \beta}$) states that find a solution $(\vec{z}_1, \dots, \vec{z}_k) \in R_q$ and $||\vec{z}_i|| \leq \beta$ of the following problem is hard:
+    \begin{align*}
+      \sum_{i= 1}^k \vec{a}_i \vec{z}_i &= \vec{0}~mod~\vec{f}
+    \end{align*}
+    for any polynomial number of samples, where $\vec{a}_i \sample R_q$
   \end{definition}
 
 \end{section}

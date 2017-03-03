@@ -1,6 +1,20 @@
 Lossy trapdoor functions are proved to be very usefull for the construction of CCA-secure encryption scheme. 
-There already exists many efficient constructions of all-but-one lossy trapdoor functions with various assumptions~\cite{DBLP:journals/siamcomp/PeikertW11, DBLP:conf/crypto/BoldyrevaFO08}
+There already exists many efficient constructions of all-but-one lossy trapdoor functions with various assumptions~\cite{DBLP:journals/siamcomp/PeikertW11, DBLP:conf/crypto/BoldyrevaFO08}.
+
+The main idea of the lossy trapdoor function is that, it can be operated in two modes: Injective mode and lossy mode.
 
 \begin{section}{All-but-one lossy trapdoor function}
 
+  \begin{definition}
+    A lossy trapdoor function $LTF$ with domain $Dom$ consits of the following algorithms $LTF = (\KeyGen, \Eval, \Inv, \LKeyGen)$:
+    \begin{description}
+    \item[${\mathsf{\KeyGen}}$] :
+      \begin{enumerate}
+        \item $LTF.\KeyGen(1^\lambda)$
+      \end{enumerate}
+    \item[${\mathsf{\Eval}}$] :
+    \item[${\mathsf{\Inv}}$] :
+    \item[${\mathsf{\LKeyGen}}$] :
+    \end{description}
+  \end{definition}
 \end{section}

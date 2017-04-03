@@ -17,136 +17,173 @@
 % 
 %\end{section}
 \begin{section}{Preliminaries}
-  \begin{definition}{$\Sigma$-Protocol}
-    \todo{complete the definition}
-  \end{definition}
+%  \begin{definition}{$\Sigma$-Protocol}
+%    \todo{complete the definition}
+%  \end{definition}
+% 
+% 
+%  \begin{definition}{\textsf(Soundness with unique identifiable challenge)}
+%    A sigma protocol $(\Prove_{\Sigma}, \Verif_{\Sigma})$ has a unique identifiable challenge \wrt an NP-relation $\mathcal{R}_{guilt}$, if there is a PPT algorithm $\mathcal{E}$ which takes as the input the statement, the witness and initial message and returns the unique challenge $e$ can be answered.
+% 
+%    Formally we can define this notion as follows:
+%    
+%    For all $x, w_{guilt}, a, e, z$ that $(x, w_{guilt}) \in \mathcal{R}_{guilt}$ and $\Verif_{\Sigma}(x, a, e, z) = \True$, the PPT algorithm $\mathcal{E}$ verifies $e = \mathcal{E}(x, w_{guilt}, a)$.
+%    
+%  \end{definition}
+%\end{section}
+% 
+%\begin{section}{Designed Verifier Non-Interactive proof system}
+% 
+%  Our scheme based on the $\Sigma$-protocol proposed by Baum~\etal~\cite{DBLP:journals/iacr/BaumDOP16} and we instantiate the transformation from $\Sigma$-protocol to $DV-NIZK$ without random oracle~\cite{DBLP:conf/pkc/ChaidosG15}.
+% 
+%  \begin{subsection}{$\Sigma$-protocol for encryption of $0$ or $1$}
+%    In this subsection, we instantiate the $\Sigma$-protocol for encryption of $0$ or $1$ with the lattice assumptions.
+%    And prove the soundness with unique identifiable challenge property for a such $\Sigma$-protocol.
+%    
+%    Here we instantiate with the GSW~\cite{DBLP:conf/crypto/GentrySW13} fully homomorphic encryption scheme with adaptations.
+%    \begin{description}
+% 
+%      \item[$\Setup(1^\lambda, 1^L)$]:
+%        \begin{enumerate}
+%        \item Choose a modulus $q$ prime of $\kappa = \kappa(\lambda, L)$ bits, the lattice dimension parameter $n = n (\lambda, L)$ and the error distribution $\chi = \chi(\lambda, L)$ to ensure at least $\lambda$ bit security against the LWE problem.
+%        \item Then we compute $m = m (\lambda, L) = O (n~log~q)$, $\ell = \floor{q} + 1$ and $N = (n+1) \times \ell$
+%        \item Sample $\vec{t} \sample \mathbb{Z}_q^m$.
+%        \item Let $\vec{s} = (1, -t_1, \dots, -t_n) \in \mathbb{Z}_q^{n+1}$.
+%        \item Sample a uniformly random matrix $B  \gets \mathbb{Z}_q^{m\times n}$ and a noise vector $\vec{e} \gets \chi^{m}$.
+%        \item Compute $\vec{b} = B \cdot \vec{t} + \vec{e}$. 
+%        \item Set the matrix $A = [\vec{b} | B ] \in \mathbb{Z}_q^{m \times (n+1)}$, remark that $A \cdot \vec{s} = \vec{e}$.
+%        \item Output $PP = (n, q, \chi, m)$, $\SK = \vec{s} \in \mathbb{Z}_q^{n+1}$ and $\PK = A \in \mathbb{Z}_q^{m \times (n+1)}$.
+%        \end{enumerate}
+%      \item[$\Com((\PK, C), (\mu, R))$]:
+% 
+%        We begin with the specification of each argument:
+%        \begin{enumerate}
+%        \item $\PK = A \in\mathbb{Z}_q^{m \times (n+1)}$,
+%        \item $C = \{0,1\}^{N \times N}$.
+%        \item $\mu \in \mathbb{Z}_q$.
+%        \item $R \in \{0,1\}^{N \times m}$
+%        \end{enumerate}
+%        
+%        The commitment algorithm proceeds as follows:
+% 
+%        \begin{enumerate}
+%        \item Choose $m_a \gets \{1\}||\{0,1\}^{l-2} \cap \mathbb{Z}_q$, $R_a \gets \{0,1\}^{N \times m}$ and $R_b \gets \{0,1\}^{N \times m}$.
+%        \item Compute
+%          \begin{align*}
+%            C_a  &= \Flatten(m_a \cdot Id_{N} + \BitDecomp(R_a \cdot A)) \in \mathbb{Z}_q^{N \times N}, \\
+%            C_b  &= \Flatten(-\mu \cdot m_a \cdot Id_{N} + \BitDecomp(R_b \cdot A)) \in \mathbb{Z}_q^{N \times N}.
+%          \end{align*}
+%        \end{enumerate}
+% 
+%     \item[$\Prove(\PK, C, \mu, R, f, m_a, R_a, m_b, R_b, e \in \mathbb{Z}_q)$]:
+%        \begin{enumerate}
+%        \item Compute 
+%          \begin{align*}
+%            f &\gets \Flatten(e \cdot I_N) \cdot  \Flatten(m \cdot I_N) + \Flatten(m_a \cdot I_N) \in \mathbb{Z}_q^{N \times N},\\
+%            z_a &\gets \Flatten(e \cdot I_N)\cdot \BitDecomp(R) + \BitDecomp(R_a),\\
+%            z_b &= \Flatten((f-e)\cdot I_N) \cdot \BitDecomp(R) + \BitDecomp(R_b).
+%          \end{align*}
+%        \item Output $(f, z_a, z_b)$.
+%        \end{enumerate}
+% 
+%      \item[$\Verif(\PK, c, C_a, z_a, C_b, z_b, e, f)$]:
+%        \begin{enumerate}
+%        \item Verify that $(C_a, C_b) \in (\{0,1\}^{(l-1) \times N})^2$.
+%        \item Verify that $f \in \mathbb{Z}_q$.
+%        \item Verify that $(z_a, z_b) \in  (\{0,1\}^{(l-1) \times m)})$.
+%        \item Verify that
+%          \begin{align*}
+%            {\mathsf{MultConst}}(C, e) &= FHE.\Enc(f; z_a) & {\mathsf{MultConst}}(C, f-e) + C_b &= FHE.\Enc(0; z_b)
+%          \end{align*}
+% 
+%          These two equations can be written in the following forms.
+% 
+%          \begin{align*}
+%            \Flatten(f \cdot I_N) &= \Flatten(\Flatten(e \cdot I_N) \cdot \Flatten(\mu \cdot I_N) \\
+%                                  &+ \Flatten(m_a \cdot I_N))\\
+%            0 &= \Flatten(\Flatten((f-e) \cdot I_N) + \Flatten(m_b \cdot I_N))
+%          \end{align*}
+%        \end{enumerate}
+% 
+% 
+% 
+% 
+%        \begin{lemma}
+%          The previous described $\Sigma$-protocol is sound with unique identifiable challenge for the $\mathcal{R}_{guilt} = \{(x = (\PK, c),w_{guilt} = (m, R)) | c \in \mathcal{C}~and~\Dec(\SK, c) \not \in \{ 0, 1 \}~and~{\mathsf{VerifyKey}(1^{\lambda}, \PK, SK)} = \True\}$. 
+%        \end{lemma}
+% 
+%        \begin{proof}
+%          As the adversary has responded correctly for the challenge $e$ which means the proof $\pi = (f, z_a, z_b)$ verifies that
+%          \begin{align*}
+%            \Flatten(f \cdot I_N) &= \Flatten(\Flatten(e \cdot I_N) \cdot \Flatten(m \cdot I_N) \\
+%                                  &+ \Flatten(m_a \cdot I_N))\\
+%            0 &= \Flatten(\Flatten((f-e) \cdot I_N)\cdot \Flatten(m \cdot I_N) + \Flatten(m_b))
+%          \end{align*}
+%          
+%          By substitute $f$ in th second equation, we have the following equality:
+% 
+%          \begin{equation}
+%            \begin{split}
+%              0 =& \Flatten(\Flatten(e \cdot I_N) \cdot \Flatten(m \cdot I_N) \cdot \Flatten(m \cdot I_N) \\
+%              &- \Flatten(m_a \cdot I_N) \cdot \Flatten(m \cdot I_N) \\
+%              &- \Flatten(e \cdot I_N)\cdot \Flatten(m \cdot I_N) \\
+%              &+ \Flatten(m_b \cdot I_N))\\
+%            \end{split}
+%          \end{equation}
+%          
+%          Using the lemma~\ref{rm-flatten}. We can multiply the both sides by the vector $(1, 2, \dots, 2^{N-1})^T$. We obtain the following equation.
+%          \begin{align*}
+%            (e\cdot m^2 - m_a \cdot m - e \cdot m + m_b) \cdot \left( \begin{smallmatrix} 1\\ 2\\ \vdots \\ 2^{N-1} \end{smallmatrix}\right) &= \left( \begin{smallmatrix} 0\\ 0\\ \vdots \\ 0 \end{smallmatrix}\right)~mod~q\\
+%            e \cdot m^2 - m_a \cdot m - e \cdot m + m_b &= 0 mod q
+%          \end{align*}
+%          
+% 
+%          As we have $m \not \in \{0,1\}$ and $m \in \mathbb{Z}_q^*$, thus $e$ is uniquely defined by $\frac{m_a \cdot m + m_b}{(m -1 ) \cdot m}$. 
+%        \end{proof}
+%        
+%        
+%    \end{description}
+% 
+% 
+%  \end{subsection}
 
+  \begin{subsection}{$\Sigma$-protocol revisited by using simpler Gadget matrix presentation}
 
-  \begin{definition}{\textsf(Soundness with unique identifiable challenge)}
-    A sigma protocol $(\Prove_{\Sigma}, \Verif_{\Sigma})$ has a unique identifiable challenge \wrt an NP-relation $\mathcal{R}_{guilt}$, if there is a PPT algorithm $\mathcal{E}$ which takes as the input the statement, the witness and initial message and returns the unique challenge $e$ can be answered.
+    This $\Sigma$-protocol can prove the ciphertext of $0$ or $1$.
 
-    Formally we can define this notion as follows:
-    
-    For all $x, w_{guilt}, a, e, z$ that $(x, w_{guilt}) \in \mathcal{R}_{guilt}$ and $\Verif_{\Sigma}(x, a, e, z) = \True$, the PPT algorithm $\mathcal{E}$ verifies $e = \mathcal{E}(x, w_{guilt}, a)$.
-    
-  \end{definition}
-\end{section}
-
-\begin{section}{Designed Verifier Non-Interactive proof system}
-
-  Our scheme based on the $\Sigma$-protocol proposed by Baum~\etal~\cite{DBLP:journals/iacr/BaumDOP16} and we instantiate the transformation from $\Sigma$-protocol to $DV-NIZK$ without random oracle~\cite{DBLP:conf/pkc/ChaidosG15}.
-
-  \begin{subsection}{$\Sigma$-protocol for encryption of $0$ or $1$}
-    In this subsection, we instantiate the $\Sigma$-protocol for encryption of $0$ or $1$ with the lattice assumptions.
-    And prove the soundness with unique identifiable challenge property for a such $\Sigma$-protocol.
-    
-    Here we instantiate with the GSW~\cite{DBLP:conf/crypto/GentrySW13} fully homomorphic encryption scheme with adaptations.
     \begin{description}
+    \item[$\KeyGen(1^\lambda, 1^L)$]:
+      \begin{enumerate}
+      \item Choose a modulus $q$ prime of $\kappa = \kappa(\lambda, L)$ bits, the lattice dimension parameter $n = n(\lambda, L)$ and the error distribution $\chi = \chi(\lambda, L)$ to ensure at least $\lambda$ bits security against the LWE problem.
+      \item Compute $m = m(\lambda, L) = O(n~log~q)$, $\ell = \floor{q}+1$ and $N = (n+1) \cdot \ell$.
+      \item Sample $\vec{t} \sample \mathbb{Z}_q^m$ and set $\vec{s} = (1, -t_1, \dots, -t_n) \in \mathbb{Z}_q^{n+1}$.
+      \item Sample a uniformaly random matrix $B \gets \mathbb{Z}_q^{m \times n}$ and a noise vector $\vec{e} \gets \chi^m$.
+      \item Compute $\vec{b} = B \cdot \vec{t} + \vec{e}$.
+      \item Set the matrix $A = [\vec{b}|B] \in \mathbb{Z}_q^{m \times (n+1)}$, remark that $A \cdot \vec{s} = \vec{e}$.
+      \item Output $\PPP = (n, q, \chi, m)$, $\SK = \vec{s} \in \mathbb{Z}_q^{n+1}$ and $\PK = A \in \mathbb{Z}_q^{m \times (n+1)}$.
+      \end{enumerate}
+    \item[$\Com((\PK, C), (\mu, R))$]:
+      \begin{enumerate}
+      \item Choose $m_a \gets \{1\}||\{0,1\}^{\ell-2} \cap \mathbb{Z}_q$, $R_a \gets \{0,1\}^{N \times m}$ and $R_b \gets \{0,1\}^{N \times m}$.
+      \item Compute
+        \begin{align*}
+          C_a &= A\cdot R_a + m_a \cdot G \in \mathbb{Z}_q^{N \times N}\\
+          C_b &= A\cdot R_b - \mu \cdot m_a \cdot G \in \mathbb{Z}_q^{N \times N}          
+        \end{align*}
+      \item Ouput $C_a, C_b$.
+      \end{enumerate}
 
-      \item[$\Setup(1^\lambda, 1^L)$]:
-        \begin{enumerate}
-        \item Choose a modulus $q$ prime of $\kappa = \kappa(\lambda, L)$ bits, the lattice dimension parameter $n = n (\lambda, L)$ and the error distribution $\chi = \chi(\lambda, L)$ to ensure at least $\lambda$ bit security against the LWE problem.
-        \item Then we compute $m = m (\lambda, L) = O (n~log~q)$, $\ell = \floor{q} + 1$ and $N = (n+1) \times \ell$
-        \item Sample $\vec{t} \sample \mathbb{Z}_q^m$.
-        \item Let $\vec{s} = (1, -t_1, \dots, -t_n) \in \mathbb{Z}_q^{n+1}$.
-        \item Sample a uniformly random matrix $B  \gets \mathbb{Z}_q^{m\times n}$ and a noise vector $\vec{e} \gets \chi^{m}$.
-        \item Compute $\vec{b} = B \cdot \vec{t} + \vec{e}$. 
-        \item Set the matrix $A = [\vec{b} | B ] \in \mathbb{Z}_q^{m \times (n+1)}$, remark that $A \cdot \vec{s} = \vec{e}$.
-        \item Output $PP = (n, q, \chi, m)$, $\SK = \vec{s} \in \mathbb{Z}_q^{n+1}$ and $\PK = A \in \mathbb{Z}_q^{m \times (n+1)}$.
-        \end{enumerate}
-      \item[$\Com((\PK, C), (\mu, R))$]:
-
-        We begin with the specification of each argument:
-        \begin{enumerate}
-        \item $\PK = A \in\mathbb{Z}_q^{m \times (n+1)}$,
-        \item $C = \{0,1\}^{N \times N}$.
-        \item $\mu \in \mathbb{Z}_q$.
-        \item $R \in \{0,1\}^{N \times m}$
-        \end{enumerate}
-        
-        The commitment algorithm proceeds as follows:
-
-        \begin{enumerate}
-        \item Choose $m_a \gets \{1\}||\{0,1\}^{l-2} \cap \mathbb{Z}_q$, $R_a \gets \{0,1\}^{N \times m}$ and $R_b \gets \{0,1\}^{N \times m}$.
-        \item Compute
-          \begin{align*}
-            C_a  &= \Flatten(m_a \cdot Id_{N} + \BitDecomp(R_a \cdot A)) \in \mathbb{Z}_q^{N \times N}, \\
-            C_b  &= \Flatten(-\mu \cdot m_a \cdot Id_{N} + \BitDecomp(R_b \cdot A)) \in \mathbb{Z}_q^{N \times N}.
-          \end{align*}
-        \end{enumerate}
-
-     \item[$\Prove(\PK, C, \mu, R, f, m_a, R_a, m_b, R_b, e \in \mathbb{Z}_q)$]:
-        \begin{enumerate}
-        \item Compute 
-          \begin{align*}
-            f &\gets \Flatten(e \cdot I_N) \cdot  \Flatten(m \cdot I_N) + \Flatten(m_a \cdot I_N) \in \mathbb{Z}_q^{N \times N},\\
-            z_a &\gets \Flatten(e \cdot I_N)\cdot \BitDecomp(R) + \BitDecomp(R_a),\\
-            z_b &= \Flatten((f-e)\cdot I_N) \cdot \BitDecomp(R) + \BitDecomp(R_b).
-          \end{align*}
-        \item Output $(f, z_a, z_b)$.
-        \end{enumerate}
-
-      \item[$\Verif(\PK, c, C_a, z_a, C_b, z_b, e, f)$]:
-        \begin{enumerate}
-        \item Verify that $(C_a, C_b) \in (\{0,1\}^{(l-1) \times N})^2$.
-        \item Verify that $f \in \mathbb{Z}_q$.
-        \item Verify that $(z_a, z_b) \in  (\{0,1\}^{(l-1) \times m)})$.
-        \item Verify that
-          \begin{align*}
-            {\mathsf{MultConst}}(C, e) &= FHE.\Enc(f; z_a) & {\mathsf{MultConst}}(C, f-e) + C_b &= FHE.\Enc(0; z_b)
-          \end{align*}
-
-          These two equations can be written in the following forms.
-
-          \begin{align*}
-            \Flatten(f \cdot I_N) &= \Flatten(\Flatten(e \cdot I_N) \cdot \Flatten(\mu \cdot I_N) \\
-                                  &+ \Flatten(m_a \cdot I_N))\\
-            0 &= \Flatten(\Flatten((f-e) \cdot I_N) + \Flatten(m_b \cdot I_N))
-          \end{align*}
-        \end{enumerate}
-
-
-
-
-        \begin{lemma}
-          The previous described $\Sigma$-protocol is sound with unique identifiable challenge for the $\mathcal{R}_{guilt} = \{(x = (\PK, c),w_{guilt} = (m, R)) | c \in \mathcal{C}~and~\Dec(\SK, c) \not \in \{ 0, 1 \}~and~{\mathsf{VerifyKey}(1^{\lambda}, \PK, SK)} = \True\}$. 
-        \end{lemma}
-
-        \begin{proof}
-          As the adversary has responded correctly for the challenge $e$ which means the proof $\pi = (f, z_a, z_b)$ verifies that
-          \begin{align*}
-            \Flatten(f \cdot I_N) &= \Flatten(\Flatten(e \cdot I_N) \cdot \Flatten(m \cdot I_N) \\
-                                  &+ \Flatten(m_a \cdot I_N))\\
-            0 &= \Flatten(\Flatten((f-e) \cdot I_N)\cdot \Flatten(m \cdot I_N) + \Flatten(m_b))
-          \end{align*}
-          
-          By substitute $f$ in th second equation, we have the following equality:
-
-          \begin{equation}
-            \begin{split}
-              0 =& \Flatten(\Flatten(e \cdot I_N) \cdot \Flatten(m \cdot I_N) \cdot \Flatten(m \cdot I_N) \\
-              &- \Flatten(m_a \cdot I_N) \cdot \Flatten(m \cdot I_N) \\
-              &- \Flatten(e \cdot I_N)\cdot \Flatten(m \cdot I_N) \\
-              &+ \Flatten(m_b \cdot I_N))\\
-            \end{split}
-          \end{equation}
-          
-          Using the lemma~\ref{rm-flatten}. We can multiply the both sides by the vector $(1, 2, \dots, 2^{N-1})^T$. We obtain the following equation.
-          \begin{align*}
-            (e\cdot m^2 - m_a \cdot m - e \cdot m + m_b) \cdot \left( \begin{smallmatrix} 1\\ 2\\ \vdots \\ 2^{N-1} \end{smallmatrix}\right) &= \left( \begin{smallmatrix} 0\\ 0\\ \vdots \\ 0 \end{smallmatrix}\right)~mod~q\\
-            e \cdot m^2 - m_a \cdot m - e \cdot m + m_b &= 0 mod q
-          \end{align*}
-          
-
-          As we have $m \not \in \{0,1\}$ and $m \in \mathbb{Z}_q^*$, thus $e$ is uniquely defined by $\frac{m_a \cdot m + m_b}{(m -1 ) \cdot m}$. 
-        \end{proof}
-        
-        
+    \item[$\PK, C, \mu, R, f, m_a, R_a, m_b, R_b, e \in \mathbb{Z}_q$]:
+      \begin{enumerate}
+      \item 
+      \end{enumerate}
+      
+    \item[$\Verif()$]
     \end{description}
-
-
   \end{subsection}
 
+
+  
   \begin{subsection}{Construction of the DV-NIZK of a encryption of $0$ or $1$}
     \begin{description}
 

@@ -173,12 +173,22 @@
       \item Ouput $C_a, C_b$.
       \end{enumerate}
 
-    \item[$\PK, C, \mu, R, f, m_a, R_a, m_b, R_b, e \in \mathbb{Z}_q$]:
+    \item[$\Prove(\PK, C, m, R, f, m_a, R_a, m_b, R_b, e \in \mathbb{Z}_q)$]:
       \begin{enumerate}
-      \item 
+      \item Compute $f = em +m_a$.
+      \item Compute $Z_a = R \cdot G^{-1}(e \cdot G) + R_a$.
+      \item Compute $Z_b = R \cdot G^{-1}((f-e) \cdot G) + R_b$.
+      \item Output $(f, Z_a, Z_b)$.
       \end{enumerate}
       
-    \item[$\Verif()$]
+    \item[$\Verif(\PK, c, C_a, Z_a, C_b, Z_b, e, f)$]:
+      \begin{enumerate}
+      \item Verify that $(C_a, C_b, f, Z_a, Z_b) \in (\{0,1\}^{(\ell-1) \cdot N})^2 \times \mathbb{Z}_q \times (\{0,1\}^{(\ell-1)\cdot m})^2$.
+      \item Verify that
+        \begin{align*}
+          {\mathsf{MultConst}}(C, e)+C_a &= FHE.\Enc(f; Z_a) & {\mathsf{MultConst}}(C, f-e) + C_b &= FHE.\Enc(0; Z_b)
+        \end{align*}
+      \end{enumerate}
     \end{description}
   \end{subsection}
 

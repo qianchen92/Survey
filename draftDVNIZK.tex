@@ -234,96 +234,47 @@
   
   
   \begin{subsection}{Construction of the DV-NIZK of a encryption of $0$ or $1$}
+    
     \begin{description}
+    \item[$\KeyGen(1^\lambda, 1^L)$]:
+      \begin{enumerate}
+      \item Choose a modulus $q$ prime of $\kappa = \kappa(\lambda, L)$ bits, the lattice dimension parameter $n = n(\lambda, L)$ and the error distribution $\chi = \chi(\lambda, L)$ to ensure at least $\lambda$ bits security against the LWE problem.
+      \item Compute $m = m(\lambda, L) = O(n~log~q)$, $\ell = \floor{q}+1$ and $N = (n+1) \cdot \ell$.
+      \item Sample $\vec{t} \sample \mathbb{Z}_q^m$ and set $\vec{s} = (1, -t_1, \dots, -t_n) \in \mathbb{Z}_q^{n+1}$.
+      \item Sample a uniformaly random matrix $B \gets \mathbb{Z}_q^{m \times n}$ and a noise vector $\vec{e} \gets \chi^m$.
+      \item Compute $\vec{b} = B \cdot \vec{t} + \vec{e}$.
+      \item Set the matrix $A = [\vec{b}|B] \in \mathbb{Z}_q^{m \times (n+1)}$, remark that $A \cdot \vec{s} = \vec{e}$.
+      \item Choose a random element $e \in \mathbb{Z}_{q}$.
+      \item Compute
+        \begin{align*}
+          \mat{C}_e &= \mat{A} \mat{R}_e + e \cdot \mat{G}\\
+          \mat{C}_E &= \mat{B} \mat{R}_E + 
+        \end{align*}
+      \item Output $\PPP = (n, q, \chi, m)$, $\SK = \vec{s} \in \mathbb{Z}_q^{n+1}$ and $\PK = A \in \mathbb{Z}_q^{m \times (n+1)}$.
+      \end{enumerate}
+    \item[$\Prove((\PK, C), (\mu, R))$]:
+      \begin{enumerate}
+      \item Choose $m_a \gets \{1\}||\{0,1\}^{\ell-2} \cap \mathbb{Z}_q$, $R_a \gets \{0,1\}^{N \times m}$ and $R_b \gets \{0,1\}^{N \times m}$.
+      \item Compute
+        \begin{align*}
+          C_a &= A\cdot R_a + m_a \cdot G \in \mathbb{Z}_q^{N \times N}\\
+          C_b &= A\cdot R_b - \mu \cdot m_a \cdot G \in \mathbb{Z}_q^{N \times N}          
+        \end{align*}
+      \item Compute $f = em +m_a$.
+      \item Compute $Z_a = R \cdot G^{-1}(e \cdot G) + R_a$.
+      \item Compute $Z_b = R \cdot G^{-1}((f-e) \cdot G) + R_b$.
+      \item Output $(f, Z_a, Z_b)$.
+      \end{enumerate}
       
-      \item[$\KeyGen(1^\lambda, 1^L)$]:
-        \begin{enumerate}
-        \item Choose a modulus $q$ prime of $\kappa = \kappa(\lambda, L)$ bits, the lattice dimension parameter $n = n (\lambda, L)$ and the error distribution $\chi = \chi(\lambda, L)$ to ensure at least $\lambda$ bit security against the LWE problem.
-        \item Then we compute $m = m (\lambda, L) = O (n~log~q)$, $\ell = \floor{q} + 1$ and $N = (n+1) \times \ell$
-        \item Sample $\vec{t} \sample \mathbb{Z}_q^m$.
-        \item Let $\vec{s} = (1, -t_1, \dots, -t_n) \in \mathbb{Z}_q^{n+1}$.
-        \item Sample a uniformly random matrix $B  \gets \mathbb{Z}_q^{m\times n}$ and a noise vector $\vec{e} \gets \chi^{m}$.
-        \item Compute $\vec{b} = B \cdot \vec{t} + \vec{e}$. 
-        \item Set the matrix $A = [\vec{b} | B ] \in \mathbb{Z}_q^{m \times (n+1)}$, remark that $A \cdot \vec{s} = \vec{e}$.
-        \item Generate a random value $e \sample \mathbb{Z}_q$ and a random matrices $R_e, R_I \sample \{0,1\}^{N \times m}$.
-        \item Sample $K \sample (\mathbb{Z}_q - \{0\})^{N \times N}$ \st $K - I_N$ is invertible and there is $\tilde{K}$ verifies that $\tilde{K} \cdot (K - I_N) = I_N$.
-        \item Compute the following values $(C_e^1, C_e^2) \in \{0,1\}^{N \times N}$:
-          \begin{align*}
-            C_e^1 &\gets \Flatten(e \cdot I_N + \BitDecomp(R_e \cdot A))\\
-            C_e^2 &\gets \Flatten(e \cdot I_N + K \cdot \BitDecomp(R_e \cdot A))\\
-            C_I^1 &\gets \Flatten(I_N + \BitDecomp(R_I \cdot A))\\
-            C_I^2 &\gets \Flatten(I_N + K \cdot \BitDecomp(R_I \cdot A))
-          \end{align*}
-          
-        \item Output $\PPP = (n, q, \chi, m)$, $\SK = (\vec{s} \in \mathbb{Z}_q^{n+1}, e)$ and $\PK = (A \in \mathbb{Z}_q^{m \times (n+1)}, C_e^1, C_e^2, C_I^1, C_I^2)$.
-        \end{enumerate}
-
-
-      \item[$\Prove(\PPP, (\PK, C), (\mu, R))$]:
-
-        We begin with the specification of each argument:
-        \begin{enumerate}
-        \item $\PK = \tilde{A} \in\mathbb{Z}_q^{m \times (n+1)}$,
-        \item $C = \{0,1\}^{N \times N}$.
-        \item $\mu \in \mathbb{Z}_q$.
-        \item $R \in \{0,1\}^{N \times m}$
-        \end{enumerate}
-
-        \begin{enumerate}
-        \item Choose $m_a \gets \{1\}||\{0,1\}^{l-2} \cap \mathbb{Z}_q$, $R_a \gets \{0,1\}^{N \times m}$ and $R_b \gets \{0,1\}^{N \times m}$.
-        \item Compute
-          \begin{align*}
-            C_a  &= \Flatten(m_a \cdot Id_{N} + \BitDecomp(R_a \cdot A)) \in \mathbb{Z}_q^{N \times N}, \\
-            C_b  &= \Flatten(-\mu \cdot m_a \cdot Id_{N} + \BitDecomp(R_b \cdot A)) \in \mathbb{Z}_q^{N \times N}.
-          \end{align*}
-
-        \item Generate the randomness $R_f, R_{z_a}, R_{z_b} \sample \{0,1\}^{N \times m}$
-
-        \item Compute 
-          \begin{align*}
-            C_f \gets& C_e^1 \cdot  \Flatten(m \cdot I_N) + \Flatten(m_a \cdot I_N + \BitDecomp(R_f \cdot A)), \\
-            Z_a^1 \gets& \Flatten(C_e^1) \cdot \BitDecomp(R_1 \cdot \tilde{A}) + \Flatten(C_I^1) \cdot \BitDecomp(R_a \cdot \tilde{A})\\
-            Z_a^2 \gets& \Flatten(C_e^2) \cdot \BitDecomp(R_1 \cdot \tilde{A}) + \Flatten(C_I^2) \cdot \BitDecomp(R_a \cdot \tilde{A})\\
-            Z_b^1 \gets& \Flatten(f \cdot I_N - C_e^1) \cdot \BitDecomp(R_1 \cdot \tilde{A}) \\
-                     & + \Flatten(C_I^1) \cdot \BitDecomp(R_b \cdot \tilde{A})\\
-            Z_b^2 \gets& \Flatten(f \cdot I_N - C_e^2) \cdot \BitDecomp(R_1 \cdot \tilde{A}) \\
-                     & + \Flatten(C_I^2) \cdot \BitDecomp(R_b \cdot \tilde{A})
-          \end{align*}
-          
-        \item Outputs the proof $\pi = (C_f, C_a, Z_a, C_b, Z_b)$.
-          
-
-        \end{enumerate}
-
-      \item[$\Verif(\PPP, (\PK, C), \pi = (C_f, C_a, Z_a, C_b, Z_b), \SK)$]:
-        \begin{enumerate}
-        \item Verify that $(C_a, C_b) \in (\{0,1\}^{(l-1) \times N})^2$.
-        \item Using the secret key $\SK$ to decrypt to get $f$ and $e$.
-        \item Compute
-          \begin{align*}
-            \tilde{Z}_a = & \Flatten(\tilde{K} \cdot Z_a)\\
-            = &\Flatten(\Flatten(e \cdot I_N) \cdot \BitDecomp(R_1 \cdot \tilde{A}) + \BitDecomp(R_a \cdot \tilde{A}))
-          \end{align*}
-          and
-          \begin{align*}
-            \tilde{Z}_b = & \Flatten(\tilde{K} \cdot Z_b)\\
-            = &\Flatten(\Flatten((f-e) \cdot I_N) \cdot \BitDecomp(R_1 \cdot \tilde{A}) + \BitDecomp(R_b \cdot \tilde{A}))
-          \end{align*}
-
-        \item Verify that $f \in \mathbb{Z}_q$.
-        \item Verify that $(z_a, z_b) \in  (\{0,1\}^{(l-1) \times m)})$.
-        \item Verify that
-          \begin{align*}
-            {\mathsf{MultConst}}(C, e) + C_a &= \Flatten(f \cdot I_N + \tilde{Z}_a)\\
-            {\mathsf{MultConst}}(C, f-e) + C_b &= \Flatten(\tilde{Z}_b)
-          \end{align*}
-
-          Remark that the right sides of the previous two equations, they are almost $GSW.\Enc(f)$ and $GSW.\Enc(0)$ using $\tilde{Z}_a$ and $\tilde{Z}_b$ as random part.
-        \end{enumerate}
-        
+    \item[$\Verif(\PK, c, C_a, Z_a, C_b, Z_b, e, f)$]:
+      \begin{enumerate}
+      \item Verify that $(C_a, C_b, f, Z_a, Z_b) \in (\{0,1\}^{(\ell-1) \cdot N})^2 \times \mathbb{Z}_q \times (\{0,1\}^{(\ell-1)\cdot m})^2$.
+      \item Verify that
+        \begin{align*}
+          {\mathsf{MultConst}}(C, e)+C_a &= FHE.\Enc(f; Z_a) & {\mathsf{MultConst}}(C, f-e) + C_b &= FHE.\Enc(0; Z_b)
+        \end{align*}
+      \end{enumerate}
     \end{description}
-
-
     
     
   \end{subsection}

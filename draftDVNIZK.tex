@@ -193,10 +193,49 @@
   \end{subsection}
 
 
+  \begin{subsection}{Matrix Fully Homomorphic Encryption~\cite{DBLP:conf/pkc/HiromasaAO15}}
+    \begin{description}
+    \item[$\KeyGen (1^\lambda, r)$]:
+      \begin{enumerate}
+      \item Set the parameters $n, q, m, \ell, N$, and $\chi$ a Gaussian distribution.
+      \item Set a uniformly random matrix $\mat{A} \sample \mathbb{Z}_q^{n \times m}$ and $\mat{S'} \sample \chi^{r \times n}$.
+      \item Choose a noise matrix $\mat{E} \sample \chi^{r \times m}$.
+      \item Let $\mat{S}:= [\mat{I}_r || - \mat{S}'] \in \mathbb{Z}_q^{r \times (n+r)}$.
+      \item Set the matrix:
+        \begin{align*}
+          \mat{B} &:= (\frac{\mat{S}'\mat{A} + \mat{E}}{\mat{A}}) \in \mathbb{Z}_q^{(n+r) \times m}
+        \end{align*}
+      \item Denote $\mat{E}_{i,j} \in \{0, 1\}^{r\times r}$ with $(i,j) \in \{1, \dots ,r\}^2$.
+      \item Sample $\mat{R}_{i,j} \sample \{0,1\}^{m \times N}$ and
+        \begin{align*}
+          \mat{P}_{i,j} &:= \mat{B} \mat{R}_{i,j} + (\frac{\mat{M}_{i,j}\mat{S}}{\mat{0}}) \mat{G} \in \mathbb{Z}_q^{(n+r) \times N}.
+        \end{align*}
+      \item Output $\PK := (\{\mat{P}_{i,j \in [r]}, \mat{B}\})$ and $\SK = \mat{S}$.
+      \end{enumerate}
+
+    \item[$\Enc(\PK, \mat{M} \in \{0,1\}^{r \times r})$] :
+      \begin{enumerate}
+      \item Sampl a random matrix $\mat{R} \sample \{0,1\}^{m \times N}$.
+      \item Compute the ciphertext:
+        \begin{align*}
+          \mat{C} &:= \mat{B} \mat{R} + \sum_{i,j \in [r] : \mat{M}[i,j] = 1} \mat{P}_{(i,j)} \in \mathbb{Z}_q^{(n+r) \times N}
+        \end{align*}
+      \end{enumerate}
+
+    \item[$\Dec(\mat{C}, \SK)$]:
+      \begin{enumerate}
+      \item Compute
+        \begin{align*}
+          \mat{M} &=(\round{\langle \vec{s}_i, \vec{c}_{j\ell-1} \rangle}_2)_{i,j \in [r]} \in \{0,1\}^{r \times r}
+        \end{align*}
+      \end{enumerate}
+    \end{description}
+  \end{subsection}
+  
   
   \begin{subsection}{Construction of the DV-NIZK of a encryption of $0$ or $1$}
     \begin{description}
-
+      
       \item[$\KeyGen(1^\lambda, 1^L)$]:
         \begin{enumerate}
         \item Choose a modulus $q$ prime of $\kappa = \kappa(\lambda, L)$ bits, the lattice dimension parameter $n = n (\lambda, L)$ and the error distribution $\chi = \chi(\lambda, L)$ to ensure at least $\lambda$ bit security against the LWE problem.
@@ -281,8 +320,6 @@
 
           Remark that the right sides of the previous two equations, they are almost $GSW.\Enc(f)$ and $GSW.\Enc(0)$ using $\tilde{Z}_a$ and $\tilde{Z}_b$ as random part.
         \end{enumerate}
-
-        
         
     \end{description}
 
